@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImproveIQ | Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            padding: 15px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+        }
+
+        .back-btn {
+            background-color: #3f2aff;
+            color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .grade-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .grade-buttons {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .grade-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 10px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .grade-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .grade-btn:active {
+            transform: translateY(0);
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .age-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .age-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            background-color: #2a50fd;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <button class="back-btn" id="backButton" style="display: none;" onclick="goBack()">← Back</button>
+        </div>
+        <img src="Assets/Logo.png" alt="Company Logo" class="logo">
+    </nav>
+
+    <div class="main-content">
+        <!-- Age Verification Form -->
+        <div id="ageVerification">
+            <div class="age-form">
+                <h1>Welcome to Our Learning Platform</h1>
+                <p class="subtitle">Please enter your age to see appropriate grade levels</p>
+                <input type="number" class="age-input" id="ageInput" placeholder="Enter your age" min="5" max="99">
+                <button class="submit-btn" onclick="verifyAge()">Continue</button>
+            </div>
+        </div>
+
+        <!-- Grade Selection (shown after age verification) -->
+        <div id="gradeSelection" class="hidden">
+            <h1 id="gradeTitle">Select Your Grade Level</h1>
+            <p class="subtitle" id="gradeSubtitle">Choose your grade to access appropriate learning materials</p>
+
+            <div class="grade-buttons" id="gradeButtonsContainer">
+                <!-- Grade buttons will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store age group globally
+        let userAgeGroup = '';
+
+        function verifyAge() {
+            const ageInput = document.getElementById('ageInput');
+            const age = parseInt(ageInput.value);
+
+            if (isNaN(age)) {
+                alert('Please enter a valid age');
+                return;
+            }
+
+            // Show back button
+            document.getElementById('backButton').style.display = 'block';
+
+            // Hide age verification, show grade selection
+            document.getElementById('ageVerification').style.display = 'none';
+            document.getElementById('gradeSelection').classList.remove('hidden');
+
+            // Determine which grades to show
+            if (age < 13) {
+                userAgeGroup = 'younger';
+                document.getElementById('gradeTitle').textContent = 'Grades 3-7';
+                document.getElementById('gradeSubtitle').textContent = 'Select your grade for younger students';
+                showGradeButtons([3, 4, 5, 6, 7]);
+            } else {
+                userAgeGroup = 'older';
+                document.getElementById('gradeTitle').textContent = 'Grades 8-12';
+                document.getElementById('gradeSubtitle').textContent = 'Select your grade for older students';
+                showGradeButtons([8, 9, 10, 11, 12]);
+            }
+        }
+
+        function showGradeButtons(grades) {
+            const container = document.getElementById('gradeButtonsContainer');
+            container.innerHTML = ''; // Clear any existing buttons
+
+            grades.forEach(grade => {
+                const button = document.createElement('button');
+                button.className = 'grade-btn';
+                button.textContent = `Grade ${grade}`;
+                button.onclick = function () { selectGrade(grade); };
+                container.appendChild(button);
+            });
+        }
+
+        function selectGrade(grade) {
+            // You can replace this with your actual grade selection logic
+            alert(`Grade ${grade} selected! Redirecting to appropriate resources...`);
+            // window.location.href = `grade-${grade}.html`; // Example redirect
+        }
+
+        function goBack() {
+            if (userAgeGroup) {
+                // If we're showing grades, go back to age verification
+                document.getElementById('ageVerification').style.display = 'block';
+                document.getElementById('gradeSelection').classList.add('hidden');
+                document.getElementById('backButton').style.display = 'none';
+                userAgeGroup = '';
+            } else {
+                // Otherwise, go to previous page in history
+                window.history.back();
+            }
+        }
+    </script>
+</body>
+
+</html>
